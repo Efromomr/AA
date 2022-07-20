@@ -1,10 +1,10 @@
-extends RigidBody2D
+extends Projectile
 
-var damage 
+
 var stuck = preload("res://Projectiles/DaggerStuck.tscn")
-var dust = preload("res://WallDust.tscn")
-func _ready():
-	pass # Replace with function body.
+var dust = preload("res://DustsTextures/WallDust.tscn")
+
+
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -18,6 +18,7 @@ func _on_RigidBody2D_body_shape_entered(body_rid, body, body_shape_index, local_
 	get_tree().get_root().call_deferred("add_child", instance)
 	get_tree().get_root().call_deferred("add_child", dust_instance)
 	dust_instance.position = position
+	dust_instance.emitting = true
 	instance.position = position
 	instance.rotation = rotation
 	queue_free()

@@ -2,7 +2,7 @@ extends KinematicBody2D
 
 
 export var ACCELERATION = 2000
-export var MAX_SPEED = 200
+export var MAX_SPEED = 150
 export var FRICTION = 2000
 
 var old_pos
@@ -14,7 +14,7 @@ var dash_cooldown = false
 var invincibilityTimer
 var blinkTimer
 var dashTimer
-onready var weapon = $Weapon
+onready var weapon = null
 onready var animationPlayer = $AnimationPlayer
 onready var animationTree = $AnimationTree
 onready var animationState = animationTree.get("parameters/playback")
@@ -25,6 +25,11 @@ var direction
 
 enum state {idle, run, jump, dead}
 export var current_state = state.idle
+
+var health = 10 setget set_health
+signal health_changed
+
+var can_attack = true setget set_can_attack
 
 func _ready():
 	Utils.player = self
@@ -48,19 +53,17 @@ func _ready():
 	dashTimer.connect("timeout", self, "dash_timer_ends")
 	add_child(dashTimer)
 	
+	Inventory.connect("weapon_changed", self, "set_weapon")
+	set_weapon()
+	
 	#var rod_instance = rod.instance()
 	#add_child(rod_instance)
 
 func _physics_process(delta):
-	mouse_pos= get_local_mouse_position()
 	move_state(delta)
-	$Hand.position.x = cos(mouse_pos.angle()) * 2 - 5
-	$Hand.position.y = sin(mouse_pos.angle()) * 2 + 5
-	$Weapon.position.x = cos(mouse_pos.angle()) * $Weapon.radius + $Weapon.offset_x
-	$Weapon.position.y = sin(mouse_pos.angle()) * $Weapon.radius + $Weapon.offset_y
-	$Weapon.rotation_degrees = rad2deg(get_local_mouse_position().angle()) + $Weapon.rot_offset
 	
 func move_state(delta):
+	mouse_pos = get_local_mouse_position()
 	input_vector.x = Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left")
 	input_vector.y = Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 	input_vector = input_vector.normalized()
@@ -85,15 +88,19 @@ func move_state(delta):
 		state.jump:
 			animationState.travel("Jump")
 		state.dead:
-			animationState.travel("Death")
-	move()
+			animationState.travel("Death1")
+			can_attack = false
+	if current_state != state.dead:
+		move()
+	else: 
+		set_physics_process(false)
 
 func move():
 	velocity = move_and_slide(velocity)
 	
 func _input(_event):
-	if Input.is_action_just_pressed("attack"):
-		weapon.shoot(Vector2(Utils.player.global_position.x + weapon.position.x, Utils.player.global_position.y + weapon.position.y), (get_global_mouse_position() - Utils.player.global_position).normalized())
+	if Input.is_action_just_pressed("attack") and can_attack:
+		weapon.shoot(Vector2(weapon.global_position.x, weapon.global_position.y), (get_global_mouse_position() - Utils.player.global_position).normalized())
 
 	#if Input.is_action_just_pressed("jump"):
 		#current_state = state.jump
@@ -106,6 +113,15 @@ func _input(_event):
 		dash(Vector2(0,-500))
 	if Input.is_action_just_released("ui_down"):
 		dash(Vector2(0,500))
+		
+func set_weapon():
+	if weapon != null:
+		weapon.queue_free()
+	var current_weapon_node = load("res://Items/" + Inventory.current_weapon + ".tscn")
+	var current_weapon_instance = current_weapon_node.instance()
+	add_child(current_weapon_instance)
+	weapon = current_weapon_instance
+	
 			
 func dash_timer_ends():
 	dash_cooldown = false
@@ -121,3 +137,31 @@ func dash(dir):
 		dashTimer.start()
 		
 
+
+
+func _on_Hurtbox_area_entered(area):
+	self.health -= area.get_parent().damage
+	if health <= 0:
+		current_state = state.dead
+		weapon.visible = false
+		$Hand.visible = false
+	else:
+		$Sprite.material.set("shader_param/active", true)
+		blinkTimer.start()
+func blink_ends():
+	$Sprite.material.set("shader_param/active", false)
+	
+func set_can_attack(value):
+	can_attack = value
+	if can_attack:
+		weapon.visible = true
+		$HandSprite.visible = false
+		$Hand.visible = true
+	else:
+		weapon.visible = false
+		$HandSprite.visible = true
+		$Hand.visible = false
+	
+func set_health(value):
+	health = value
+	emit_signal("health_changed", value)

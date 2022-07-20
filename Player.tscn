@@ -1,12 +1,16 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://vasserman.png" type="Texture" id=1]
 [ext_resource path="res://ruka_vassermana.png" type="Texture" id=2]
 [ext_resource path="res://Player.gd" type="Script" id=3]
-[ext_resource path="res://Idle .tres" type="Animation" id=4]
+[ext_resource path="res://Items/BitingShield.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Run.tres" type="Animation" id=5]
-[ext_resource path="res://ne_goloday.png" type="Texture" id=6]
-[ext_resource path="res://Cknife.tscn" type="PackedScene" id=7]
+[ext_resource path="res://DustsTextures/RedEyes.png" type="Texture" id=6]
+[ext_resource path="res://WhiteColor.shader" type="Shader" id=8]
+
+[sub_resource type="ShaderMaterial" id=26]
+shader = ExtResource( 8 )
+shader_param/active = false
 
 [sub_resource type="Animation" id=3]
 resource_name = "Death1"
@@ -38,6 +42,35 @@ tracks/0/keys = {
 "transitions": PoolRealArray( 1, 1 ),
 "update": 1,
 "values": [ 12, 13 ]
+}
+
+[sub_resource type="Animation" id=20]
+resource_name = "Idle "
+length = 0.1
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("HandSprite:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 0 ]
 }
 
 [sub_resource type="Animation" id=6]
@@ -107,9 +140,16 @@ tracks/1/keys = {
 "values": [ 0 ]
 }
 
+[sub_resource type="ShaderMaterial" id=19]
+shader = ExtResource( 8 )
+shader_param/active = false
+
 [sub_resource type="CapsuleShape2D" id=7]
 radius = 5.0
 height = 12.0
+
+[sub_resource type="AnimationNodeAnimation" id=22]
+animation = "Death1"
 
 [sub_resource type="AnimationNodeAnimation" id=8]
 animation = "Idle "
@@ -134,32 +174,46 @@ switch_mode = 2
 [sub_resource type="AnimationNodeStateMachineTransition" id=18]
 switch_mode = 2
 
+[sub_resource type="AnimationNodeStateMachineTransition" id=23]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=24]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=25]
+
 [sub_resource type="AnimationNodeStateMachine" id=16]
+states/Death1/node = SubResource( 22 )
+states/Death1/position = Vector2( 832, -98 )
 "states/Idle /node" = SubResource( 8 )
 "states/Idle /position" = Vector2( 426, -71 )
 states/Jump/node = SubResource( 9 )
 states/Jump/position = Vector2( 681, -71 )
 states/Run/node = SubResource( 10 )
 states/Run/position = Vector2( 648, -146 )
-transitions = [ "Idle ", "Run", SubResource( 11 ), "Idle ", "Jump", SubResource( 12 ), "Run", "Jump", SubResource( 13 ), "Run", "Idle ", SubResource( 14 ), "Jump", "Idle ", SubResource( 15 ), "Jump", "Run", SubResource( 18 ) ]
+transitions = [ "Idle ", "Run", SubResource( 11 ), "Idle ", "Jump", SubResource( 12 ), "Run", "Jump", SubResource( 13 ), "Run", "Idle ", SubResource( 14 ), "Jump", "Idle ", SubResource( 15 ), "Jump", "Run", SubResource( 18 ), "Run", "Death1", SubResource( 23 ), "Jump", "Death1", SubResource( 24 ), "Idle ", "Death1", SubResource( 25 ) ]
 start_node = "Idle "
 graph_offset = Vector2( 0, -203 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=17]
 
+[sub_resource type="CapsuleShape2D" id=21]
+radius = 5.0
+height = 14.0
+
 [node name="Player" type="KinematicBody2D"]
-collision_layer = 0
+material = SubResource( 26 )
+collision_layer = 2
 script = ExtResource( 3 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/Death1 = SubResource( 3 )
 anims/Death2 = SubResource( 4 )
-"anims/Idle " = ExtResource( 4 )
+"anims/Idle " = SubResource( 20 )
 anims/Jump = SubResource( 6 )
 anims/RESET = SubResource( 1 )
 anims/Run = ExtResource( 5 )
 
 [node name="Sprite" type="Sprite" parent="."]
+material = SubResource( 19 )
 texture = ExtResource( 1 )
 hframes = 10
 vframes = 2
@@ -171,6 +225,7 @@ hframes = 10
 vframes = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2( 0, 3 )
 shape = SubResource( 7 )
 
@@ -180,16 +235,27 @@ anim_player = NodePath("../AnimationPlayer")
 active = true
 parameters/playback = SubResource( 17 )
 
-[node name="Sprite2" type="Sprite" parent="."]
-visible = false
-position = Vector2( 4.5, 7.5 )
-texture = ExtResource( 6 )
-
-[node name="Weapon" parent="." instance=ExtResource( 7 )]
-
 [node name="Hand" type="Sprite" parent="."]
 position = Vector2( -5, 7 )
-scale = Vector2( 1, 0.9 )
+z_index = 1
 texture = ExtResource( 2 )
 region_enabled = true
 region_rect = Rect2( 7, 19, 4, 4 )
+
+[node name="Hurtbox" type="Area2D" parent="."]
+visible = false
+collision_layer = 0
+collision_mask = 16
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+position = Vector2( 0, 3 )
+shape = SubResource( 21 )
+
+[node name="Node2D" parent="." instance=ExtResource( 4 )]
+position = Vector2( 4.5, 7.5 )
+
+[node name="Sprite2" type="Sprite" parent="."]
+position = Vector2( 1, 0.8 )
+texture = ExtResource( 6 )
+
+[connection signal="area_entered" from="Hurtbox" to="." method="_on_Hurtbox_area_entered"]

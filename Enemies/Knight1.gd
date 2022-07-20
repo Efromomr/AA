@@ -1,60 +1,106 @@
-extends KinematicBody2D
+extends Enemy
 
+var weapon_scene = load("res://Items/Bow.tscn")
 
-export var ACCELERATION = 100
-export var MAX_SPEED = 25
-export var FRICTION = 200
-export var WANDER_TARGET_RANGE = 4
-export var damage = 1
-var health = 10
+func _init():
+	ACCELERATION = 100
+	MAX_SPEED = 25
+	FRICTION = 200
+	damage = 1
+	health = 10
+
 var attack_timer
-var mouse_pos
-var velocity = Vector2(0,0)
-enum {
-	IDLE,
-	RUN,
-	HURT,
-	DEAD,
-	ATTACK,
-	WANDER
-}
-var state = RUN
+var player_pos
+var mouse_pos = Vector2.ZERO
+var player_near = false
+
 onready var animationPlayer = $AnimationPlayer
 onready var animationTree = $AnimationTree
 onready var stateMachine = animationTree.get("parameters/playback")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	add_to_group('enemies')
+	weapon = weapon_scene.instance()
+	add_child(weapon)
+	weapon.shoot_speed = 200
 	attack_timer = Timer.new()
 	attack_timer.set_one_shot(false)
 	attack_timer.set_wait_time(3)
 	attack_timer.connect("timeout", self, "shoot")
 	add_child(attack_timer)
+	
+	
+	
 
 	attack_timer.start()
+	
+	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	
+	mouse_pos = to_local(Utils.player.position)
+	if health <= 0:
+		state = DEAD 
+		if has_node('attack_timer'):
+			attack_timer.queue_free()
 	velocity = move_and_slide(velocity)
 	match state:
+		IDLE:
+			stateMachine.travel("Idle")
+			velocity = Vector2.ZERO
+			player_pos= to_local(Utils.player.position)
+			if not player_near:
+				state = RUN
+			if player_pos.x > 0:
+				scale.x = 1
+			elif player_pos.x < 0:
+				scale.x = -1
+
 		RUN:
 			stateMachine.travel("Run")
-			accelerate_towards_point(global_position.direction_to(Utils.player.global_position))
+			if not player_near:
+				accelerate_towards_point(global_position.direction_to(Utils.player.global_position))
+			else:
+				state = IDLE
+			player_pos= to_local(Utils.player.position)
+			if player_pos.x > 0:
+				scale.x = 1
+			elif player_pos.x < 0:
+				scale.x = -1
+
+		DEAD:
+			velocity = Vector2.ZERO
+		HURT:
+			velocity = Vector2.ZERO
 			
-	mouse_pos= to_local(Utils.player.position)
-	if mouse_pos.x > 0:
-			scale.x = 1
-	elif mouse_pos.x < 0:
-			scale.x = -1
-	$MovingHand.position.x = cos(mouse_pos.angle()) * 2 - 5
-	$MovingHand.position.y = sin(mouse_pos.angle()) * 2 + 5
-	$Weapon.position.x = cos(mouse_pos.angle()) * $Weapon.radius + $Weapon.offset_x
-	$Weapon.position.y = sin(mouse_pos.angle()) * $Weapon.radius + $Weapon.offset_y
-	$Weapon.rotation_degrees = rad2deg(mouse_pos.angle()) + $Weapon.rot_offset
+	
 
 func _on_Hurtbox_area_entered(area):
-	pass # Replace with function body.
+	self.health-=area.get_parent().damage
 func shoot():
-	$Weapon.shoot(position + $Weapon.position, (Utils.player.global_position - position).normalized())
-func accelerate_towards_point(direction):
-	velocity = velocity.move_toward(direction * MAX_SPEED, ACCELERATION)
+	if state != DEAD:
+		weapon.shoot(position + weapon.position, (Utils.player.global_position - position).normalized(), false)
+		yield(get_tree().create_timer(0.2), "timeout")
+	if state != DEAD:
+		weapon.shoot(position + weapon.position, (Utils.player.global_position - position).normalized(), false)
+		yield(get_tree().create_timer(0.2), "timeout")
+	if state != DEAD:
+		weapon.shoot(position + weapon.position, (Utils.player.global_position - position).normalized(), false)
+
+
+
+func modulate():
+	$Sprite.material.set("shader_param/active", false)
+	if state != DEAD:
+		state = IDLE
+
+func die():
+	stateMachine.travel("Death")
+	.die()
+
+func _on_Area2D_body_entered(body):
+	player_near = true
+
+
+func _on_Area2D_body_exited(body):
+	player_near = false
