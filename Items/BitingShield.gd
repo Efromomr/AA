@@ -17,6 +17,7 @@ func _ready():
 
 
 func _on_Area2D_area_entered(area):
+	pass
 	if not area.get_parent().friendly:
 		area.get_parent().friendly = true
 		area.get_parent().linear_velocity *=-1

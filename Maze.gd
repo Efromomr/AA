@@ -2,6 +2,7 @@ extends TileMap
 
 var transparent_area = preload("res://TransparencyArea.tscn")
 var room = preload("res://Room.tscn")
+var sunshine_room = preload("res://Maze_room.tscn")
 var exit = preload("res://Tiles/Exit.tscn")
 var dark_area = preload("res://DarkArea.tscn")
 var down_door = preload("res://Tiles/DownDoor.tscn")
@@ -25,7 +26,6 @@ func create_room(x1, x2, y1, y2, coords_x, coords_y):
 	var mean_x = x1 + (x2-x1)/2
 	var mean_y = y1 + (y2-y1)/2
 	
-	$YSort/Foreground.set_cell(x1+1, y1+2, 0)
 	#corners
 	set_cell(x1, y1, 5)
 	set_cell(x2, y1, 6)
@@ -67,8 +67,8 @@ func create_room(x1, x2, y1, y2, coords_x, coords_y):
 			set_cell(i, j, 0, false, false, false, Vector2(randi()%3,1)) #floor
 		
 	var instance = transparent_area.instance()
-	instance.position = map_to_world(Vector2((x1+x2)/2,y2))
-	instance.get_node("CollisionShape2D").shape.extents = map_to_world(Vector2((x2-x1+1)/2,0.5))
+	instance.position = map_to_world(Vector2((x1+x2)/2+1,y2+2))
+	instance.get_node("CollisionShape2D").scale = Vector2((x2-x1)*8,30)
 	current_room.call_deferred("add_child", instance)
 	
 	
@@ -98,11 +98,11 @@ func create_room(x1, x2, y1, y2, coords_x, coords_y):
 		$YSort/Foreground.set_cell(mean_x-1, y1, -1)
 	if coords_y != 7:
 		for i in range(9):
-			set_cell(mean_x-2, y2+6+i, 23, false, false, false, Vector2(0, i%2))
+			set_cell(mean_x-2, y2+1+i, 23, false, false, false, Vector2(0, i%2))
 			set_cell(mean_x-1, y2+6+i, 0, false, false, false, Vector2(randi()%3,1))
 			set_cell(mean_x, y2+6+i, 0, false, false, false, Vector2(randi()%3,1))
 			set_cell(mean_x+1, y2+6+i, 0, false, false, false, Vector2(randi()%3,1))
-			set_cell(mean_x+2, y2+6+i, 24, false, false, false, Vector2(0, i%2))
+			set_cell(mean_x+2, y2+1+i, 24, false, false, false, Vector2(0, i%2))
 		for i in range(6):
 			set_cell(mean_x-1, y2+i, 0, false, false, false, Vector2(randi()%3,1))
 			set_cell(mean_x, y2+i, 0, false, false, false, Vector2(randi()%3,1))
@@ -210,10 +210,6 @@ func _ready():
 	grid[1][0].built = true
 	grid[0][0].spawn_exits()
 	update_bitmask_region()
-	$YSort/Foreground.place_tile_scenes()
-	#Utils.spawn_enemy("Knight1", grid[0][0], Vector2(50,50))
-	#Utils.spawn_enemy("Knight2", grid[0][0], Vector2(80,80))
-	Utils.spawn_enemy("Knight3", grid[0][0], Vector2(150,150))
 	Utils.spawn_enemy("Dummy", grid[0][0], Vector2(150,150))
 	$YSort/Foreground.set_cell(grid[0][0].x1+grid[0][0].width/2-1, grid[0][0].y1+grid[0][0].height, -1)
 	

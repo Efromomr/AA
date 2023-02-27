@@ -1,11 +1,15 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Projectiles/лазер.png" type="Texture" id=1]
 [ext_resource path="res://DustsTextures/lazer_stream.png" type="Texture" id=2]
 [ext_resource path="res://Projectiles/Lazer.gd" type="Script" id=3]
 [ext_resource path="res://DustsTextures/lazer_dust.png" type="Texture" id=4]
 
+[sub_resource type="CanvasItemMaterial" id=7]
+light_mode = 1
+
 [sub_resource type="CanvasItemMaterial" id=5]
+light_mode = 1
 particles_animation = true
 particles_anim_h_frames = 3
 particles_anim_v_frames = 2
@@ -21,7 +25,17 @@ orbit_velocity_random = 0.0
 anim_offset = 1.0
 anim_offset_random = 1.0
 
+[sub_resource type="CanvasItemMaterial" id=10]
+light_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id=11]
+light_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id=8]
+light_mode = 1
+
 [sub_resource type="CanvasItemMaterial" id=1]
+light_mode = 1
 particles_animation = true
 particles_anim_h_frames = 3
 particles_anim_v_frames = 2
@@ -46,7 +60,17 @@ scale_curve = SubResource( 3 )
 anim_offset = 1.0
 anim_offset_random = 1.0
 
+[sub_resource type="CanvasItemMaterial" id=12]
+light_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id=13]
+light_mode = 1
+
+[sub_resource type="CanvasItemMaterial" id=9]
+light_mode = 1
+
 [node name="Node2D" type="Node2D"]
+material = SubResource( 7 )
 script = ExtResource( 3 )
 
 [node name="Tween" type="Tween" parent="."]
@@ -64,12 +88,14 @@ texture = ExtResource( 4 )
 
 [node name="Start" type="Sprite" parent="Ray2"]
 modulate = Color( 2, 1, 1, 1 )
+material = SubResource( 10 )
 texture = ExtResource( 1 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 4, 5 )
 
 [node name="End" type="Sprite" parent="Ray2"]
 modulate = Color( 2, 1, 1, 1 )
+material = SubResource( 11 )
 position = Vector2( 86, 0 )
 texture = ExtResource( 1 )
 region_enabled = true
@@ -77,6 +103,7 @@ region_rect = Rect2( 10, 0, 10, 5 )
 
 [node name="Sprite" type="Sprite" parent="Ray2"]
 modulate = Color( 2, 1, 1, 1 )
+material = SubResource( 8 )
 position = Vector2( 43, 0 )
 texture = ExtResource( 2 )
 region_enabled = true
@@ -105,12 +132,14 @@ texture = ExtResource( 4 )
 
 [node name="Start" type="Sprite" parent="Ray"]
 modulate = Color( 2, 1, 1, 1 )
+material = SubResource( 12 )
 texture = ExtResource( 1 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 4, 5 )
 
 [node name="End" type="Sprite" parent="Ray"]
 modulate = Color( 2, 1, 1, 1 )
+material = SubResource( 13 )
 position = Vector2( 86, 0 )
 texture = ExtResource( 1 )
 region_enabled = true
@@ -118,6 +147,7 @@ region_rect = Rect2( 10, 0, 10, 5 )
 
 [node name="Sprite" type="Sprite" parent="Ray"]
 modulate = Color( 2, 1, 1, 1 )
+material = SubResource( 9 )
 position = Vector2( 43, 0 )
 texture = ExtResource( 2 )
 region_enabled = true

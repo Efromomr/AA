@@ -31,5 +31,5 @@ func random_choice(array):
 func spawn_enemy(enemy_name, room, position=Vector2(0,0)):
 	var enemy_scene = load("res://Enemies/"+enemy_name+".tscn")
 	var instance = enemy_scene.instance()
-	room.call_deferred("add_child", instance)
+	get_tree().get_root().call_deferred("add_child", instance)
 	instance.global_position = get_tree().get_root().get_node("Maze").map_to_world(Vector2(room.x1, room.y1)) + position

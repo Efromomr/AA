@@ -2,7 +2,7 @@ extends RigidBody2D
 
 class_name Projectile
 
-var damage 
+var damage = 0
 var friendly setget set_friendly
 
 func _ready():
@@ -10,6 +10,7 @@ func _ready():
 	contact_monitor = 1
 	self.connect("body_shape_entered", self, '_on_RigidBody2D_body_shape_entered')
 	$Area2D.set_collision_layer_bit(5, 32)
+	$Area2D.set_collision_layer_bit(6, 64)
 	set_collision_mask_bit(0,1)
 	
 func _on_RigidBody2D_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):

@@ -13,6 +13,7 @@ var attack_timer
 var player_pos
 var mouse_pos = Vector2.ZERO
 var player_near = false
+var name_
 
 onready var animationPlayer = $AnimationPlayer
 onready var animationTree = $AnimationTree
@@ -23,12 +24,13 @@ func _ready():
 	add_to_group('enemies')
 	weapon = weapon_scene.instance()
 	add_child(weapon)
-	weapon.shoot_speed = 200
+	weapon.shoot_speed = 500
 	attack_timer = Timer.new()
 	attack_timer.set_one_shot(false)
 	attack_timer.set_wait_time(3)
 	attack_timer.connect("timeout", self, "shoot")
 	add_child(attack_timer)
+	name_ = 'Knight1'
 	
 	
 	
@@ -72,11 +74,17 @@ func _process(delta):
 			velocity = Vector2.ZERO
 		HURT:
 			velocity = Vector2.ZERO
+			if not player_near:
+				state = RUN
+			else:
+				state = IDLE
 			
 	
 
 func _on_Hurtbox_area_entered(area):
 	self.health-=area.get_parent().damage
+	velocity += area.get_parent().linear_velocity / 2
+	velocity = move_and_slide(velocity)
 func shoot():
 	if state != DEAD:
 		weapon.shoot(position + weapon.position, (Utils.player.global_position - position).normalized(), false)
@@ -91,11 +99,10 @@ func shoot():
 
 func modulate():
 	$Sprite.material.set("shader_param/active", false)
-	if state != DEAD:
-		state = IDLE
 
 func die():
 	stateMachine.travel("Death")
+	weapon.queue_free()
 	.die()
 
 func _on_Area2D_body_entered(body):

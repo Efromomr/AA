@@ -1,0 +1,192 @@
+[gd_scene load_steps=15 format=2]
+
+[ext_resource path="res://UI/UI.gd" type="Script" id=1]
+[ext_resource path="res://UI/oruzheynoe_okno.png" type="Texture" id=2]
+[ext_resource path="res://AeSystematicTtBrk.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://UI/kniga3.png" type="Texture" id=4]
+[ext_resource path="res://UI/CharcoalExtinct.tscn" type="PackedScene" id=5]
+[ext_resource path="res://UI/Charcoal1.tscn" type="PackedScene" id=6]
+[ext_resource path="res://UI/chasha_2.png" type="Texture" id=7]
+[ext_resource path="res://UI/platforma.png" type="Texture" id=8]
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Book:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "play"
+length = 3.6
+step = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Book:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.07, 0.14, 0.21, 0.31, 0.41, 0.48, 0.55, 0.62, 0.68, 0.76, 0.84, 0.9, 0.96, 1.02, 1.07, 1.12, 1.17, 1.24, 1.32, 1.4, 1.47, 1.54, 1.61, 1.66, 1.71, 1.76, 1.81, 1.88, 1.95, 2.02, 2.09, 2.16, 2.23, 2.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35 ]
+}
+
+[sub_resource type="DynamicFont" id=3]
+size = 9
+font_data = ExtResource( 3 )
+
+[sub_resource type="Animation" id=4]
+resource_name = "FullBurning"
+length = 2.3
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.1, 2.2, 2.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 ]
+}
+
+[sub_resource type="Animation" id=5]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0 ]
+}
+
+[sub_resource type="Curve2D" id=6]
+_data = {
+"points": PoolVector2Array( 35.6439, 11.6363, -35.6439, -11.6363, 19.3712, 263.096, -44.8423, 3.10302, 44.8423, -3.10302, 44.9512, 213.392, 18.2052, -10.3434, -18.2052, 10.3434, 81.7865, 263.096, 0, 0, 0, 0, 19.3712, 263.096 )
+}
+
+[node name="UI" type="Control"]
+margin_top = -2.0
+margin_right = 481.0
+margin_bottom = 270.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+margin_left = 2.0
+margin_top = 4.0
+margin_right = 72.0
+margin_bottom = 76.0
+rect_scale = Vector2( 0.66, 0.66 )
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Charcoals" type="Node2D" parent="."]
+scale = Vector2( 0.66, 0.66 )
+
+[node name="AnimatedSprite" parent="Charcoals" instance=ExtResource( 6 )]
+position = Vector2( 100, 37 )
+frame = 8
+playing = false
+
+[node name="AnimatedSprite3" parent="Charcoals" instance=ExtResource( 6 )]
+position = Vector2( 134, 37 )
+frame = 8
+playing = false
+
+[node name="AnimatedSprite2" parent="Charcoals" instance=ExtResource( 5 )]
+position = Vector2( 131, 51 )
+frame = 4
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 1 )
+anims/play = SubResource( 2 )
+
+[node name="Book" type="Sprite" parent="."]
+visible = false
+position = Vector2( 239, 115 )
+scale = Vector2( 0.9, 0.9 )
+texture = ExtResource( 4 )
+hframes = 36
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+visible = false
+margin_left = 97.0
+margin_top = 38.0
+margin_right = 236.0
+margin_bottom = 229.0
+custom_fonts/normal_font = SubResource( 3 )
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+scroll_active = false
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 467, 234 )
+texture = ExtResource( 7 )
+hframes = 24
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+autoplay = "FullBurning"
+playback_speed = 1.5
+anims/FullBurning = SubResource( 4 )
+anims/RESET = SubResource( 5 )
+
+[node name="Path2D" type="Path2D" parent="."]
+position = Vector2( 419, 32 )
+scale = Vector2( 0.977325, 0.847928 )
+curve = SubResource( 6 )
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Path2D"]
+position = Vector2( 53.3241, 267.619 )
+offset = 200.0
+rotate = false
+
+[node name="Sprite" type="Sprite" parent="Path2D/PathFollow2D"]
+texture = ExtResource( 8 )
+
+[node name="PathFollow2D2" type="PathFollow2D" parent="Path2D"]
+modulate = Color( 1, 1, 1, 0.6 )
+position = Vector2( -0.0206163, 242.864 )
+scale = Vector2( 0.7, 0.7 )
+offset = 30.0
+rotate = false
+
+[node name="Sprite" type="Sprite" parent="Path2D/PathFollow2D2"]
+texture = ExtResource( 8 )
+
+[node name="PathFollow2D3" type="PathFollow2D" parent="Path2D"]
+modulate = Color( 1, 1, 1, 0.7 )
+position = Vector2( 56.711, 213.664 )
+scale = Vector2( 0.8, 0.8 )
+offset = 100.0
+rotate = false
+
+[node name="Sprite" type="Sprite" parent="Path2D/PathFollow2D3"]
+texture = ExtResource( 8 )
+
+[node name="PathT" type="Tween" parent="."]

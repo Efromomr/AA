@@ -1,6 +1,6 @@
 extends Enemy
 
-
+var name_ = 'Dummy'
 
 func _on_Area2D_area_entered(area):
 	$AnimatedSprite.play()

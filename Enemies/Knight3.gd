@@ -13,6 +13,7 @@ var attack_timer
 var player_pos
 var mouse_pos = Vector2.ZERO
 var player_near = false
+var name_
 
 onready var animationPlayer = $AnimationPlayer
 onready var animationTree = $AnimationTree
@@ -29,7 +30,7 @@ func _ready():
 	attack_timer.set_wait_time(3)
 	attack_timer.connect("timeout", self, "shoot")
 	add_child(attack_timer)
-	
+	name_ = 'Knight3'
 	
 	
 
@@ -96,6 +97,7 @@ func modulate():
 
 func die():
 	stateMachine.travel("Death")
+	weapon.queue_free()
 	.die()
 
 func _on_Area2D_body_entered(body):

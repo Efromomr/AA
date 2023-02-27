@@ -1,0 +1,168 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Arena.gd" type="Script" id=1]
+[ext_resource path="res://Enemies/Sunshine.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Player.tscn" type="PackedScene" id=3]
+[ext_resource path="res://MazeTileset.tres" type="TileSet" id=4]
+[ext_resource path="res://ArenaBackground.gd" type="Script" id=5]
+[ext_resource path="res://Tiles/podlozhka.png" type="Texture" id=6]
+[ext_resource path="res://Tiles/arena_osnova.png" type="Texture" id=7]
+[ext_resource path="res://Tiles/bashnya.png" type="Texture" id=8]
+[ext_resource path="res://DustsTextures/light.png" type="Texture" id=9]
+[ext_resource path="res://TextureRect4.gd" type="Script" id=10]
+[ext_resource path="res://GodRays.gdshader" type="Shader" id=11]
+[ext_resource path="res://UI.tscn" type="PackedScene" id=12]
+[ext_resource path="res://UI/ugol_faza_3-Sheet.png" type="Texture" id=13]
+
+[sub_resource type="ConvexPolygonShape2D" id=2]
+points = PoolVector2Array( 0, 76.0688, 45, 76.0688, 45, 114, 0, 114 )
+
+[sub_resource type="TileSet" id=1]
+0/name = "bashnya.png 0"
+0/texture = ExtResource( 8 )
+0/tex_offset = Vector2( 0, -100 )
+0/modulate = Color( 1, 1, 1, 1 )
+0/region = Rect2( 0, 0, 45, 114 )
+0/tile_mode = 0
+0/occluder_offset = Vector2( 0, -100 )
+0/navigation_offset = Vector2( 0, -100 )
+0/shape_offset = Vector2( 0, -100 )
+0/shape_transform = Transform2D( 1, 0, 0, 1, 0, -100 )
+0/shape = SubResource( 2 )
+0/shape_one_way = false
+0/shape_one_way_margin = 1.0
+0/shapes = [ {
+"autotile_coord": Vector2( 0, 0 ),
+"one_way": false,
+"one_way_margin": 1.0,
+"shape": SubResource( 2 ),
+"shape_transform": Transform2D( 1, 0, 0, 1, 0, -100 )
+} ]
+0/z_index = 0
+
+[sub_resource type="Environment" id=6]
+background_mode = 4
+glow_enabled = true
+glow_strength = 1.1
+glow_blend_mode = 0
+
+[sub_resource type="ShaderMaterial" id=4]
+shader = ExtResource( 11 )
+shader_param/angle = 0.3
+shader_param/position = 0.3
+shader_param/spread = 0.167
+shader_param/cutoff = 0.218
+shader_param/falloff = 0.2
+shader_param/edge_fade = 0.395
+shader_param/speed = 1.0
+shader_param/ray1_density = 8.0
+shader_param/ray2_density = 30.0
+shader_param/ray2_intensity = 0.3
+shader_param/color = Color( 3, 2.91, 2.67, 0.84 )
+shader_param/hdr = false
+shader_param/seed = 5.0
+
+[node name="Node2D" type="YSort"]
+sort_enabled = false
+script = ExtResource( 1 )
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = ExtResource( 4 )
+cell_size = Vector2( 16, 12 )
+format = 1
+script = ExtResource( 5 )
+
+[node name="Sprite" type="Sprite" parent="."]
+position = Vector2( 379, 263 )
+texture = ExtResource( 6 )
+
+[node name="Sprite2" type="Sprite" parent="."]
+position = Vector2( 379, 258 )
+texture = ExtResource( 7 )
+
+[node name="YSort" type="YSort" parent="."]
+
+[node name="KinematicBody2D" parent="YSort" instance=ExtResource( 2 )]
+position = Vector2( 327, 131 )
+
+[node name="Player" parent="YSort" instance=ExtResource( 3 )]
+
+[node name="Camera2D" type="Camera2D" parent="YSort/Player"]
+current = true
+
+[node name="TileMap2" type="TileMap" parent="YSort"]
+tile_set = SubResource( 1 )
+cell_size = Vector2( 16, 12 )
+cell_y_sort = true
+format = 1
+tile_data = PoolIntArray( 65558, 0, 0, 262157, 0, 0, 262175, 0, 0, 1114148, 0, 0, 1179656, 0, 0, 1835021, 0, 0, 1835039, 0, 0, 2097174, 0, 0 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 6 )
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+visible = false
+color = Color( 0.501961, 0.498039, 0.498039, 1 )
+
+[node name="Light2D" type="Light2D" parent="."]
+visible = false
+position = Vector2( 377, 254 )
+texture = ExtResource( 9 )
+texture_scale = 1.6
+range_z_max = 0
+
+[node name="ColorRect" type="ColorRect" parent="."]
+visible = false
+light_mask = 0
+material = SubResource( 4 )
+margin_left = 550.0
+margin_top = -431.0
+margin_right = 797.0
+margin_bottom = 298.0
+rect_rotation = 26.4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+pause_mode = 2
+
+[node name="TextureRect4" type="ColorRect" parent="CanvasLayer2"]
+margin_right = 478.0
+margin_bottom = 272.0
+color = Color( 1, 1, 1, 0 )
+script = ExtResource( 10 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+pause_mode = 2
+
+[node name="UI" parent="CanvasLayer" instance=ExtResource( 12 )]
+
+[node name="TextureProgress" type="TextureProgress" parent="CanvasLayer/UI"]
+visible = false
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -297.5
+margin_top = -36.0
+margin_right = 329.5
+margin_bottom = 8.0
+value = 100.0
+texture_under = ExtResource( 13 )
+texture_progress = ExtResource( 13 )
+tint_under = Color( 0.462745, 0.462745, 0.462745, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sprite4" type="Sprite" parent="."]
+modulate = Color( 0, 0, 0, 0.792157 )
+position = Vector2( 0, 250 )
+scale = Vector2( 6, 6 )
+texture = ExtResource( 9 )
+
+[node name="Tween" type="Tween" parent="."]

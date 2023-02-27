@@ -12,6 +12,7 @@ var velocity = Vector2.ZERO
 var blink_timer
 var death_timer
 var weapon
+var enemy_name = 'Bull'
 
 enum {
 	IDLE,
@@ -42,10 +43,8 @@ func get_class():
 	return "Enemy"
 
 func is_class(value):
-	if value == "Enemy":
-		return true
-	else:
-		return false
+	return value == "Enemy"
+
 
 func set_health(value):
 	health = value
@@ -59,7 +58,6 @@ func set_health(value):
 func die():
 	state = DEAD
 	$Hurtbox/CollisionShape2D.set_deferred("disabled", true)
-	weapon.visible = false
 	death_timer.start()
 	
 func accelerate_towards_point(direction):
